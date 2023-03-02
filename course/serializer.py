@@ -5,6 +5,8 @@ from .models import (
     Skills,FAQ,Reviews,Discussion,Answer,Reply,Question
     )
 
+from quiz.serializers import QuizSerializer
+
 
 class InstructorSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField(read_only=True) 
@@ -46,12 +48,12 @@ class TopicSerializer(serializers.ModelSerializer):
 
 class SyllabusSerializer(serializers.ModelSerializer):
     topics = TopicSerializer(many=True, read_only=True)
-
+    syllabus_quiz=QuizSerializer(read_only=True,many=True)
     class Meta:
         model = Syllabus
         fields = (
             "syllabus_id","title",
-            "topics","created","updated",
+            "topics","syllabus_quiz","created","updated",
         )
 
 
@@ -60,9 +62,6 @@ class SyllabusSerializer(serializers.ModelSerializer):
         if qs.exists():
             raise serializers.ValidationError(f"{attrs} has already exist.")
         return attrs
-
-    # def create(self, validated_data):
-    #     return super().create(validated_data)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -186,6 +185,10 @@ class QuestionSerializer(serializers.ModelSerializer):
         if qs.exists():
             raise serializers.ValidationError(f"{attrs} has already exist.")
         return attrs
+    
+    def create(self, validated_data):
+        validated_data
+        return super().create(validated_data)
 
 
 class DiscussionSerializer(serializers.ModelSerializer):

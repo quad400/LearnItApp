@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import (
                     Course,Category,Syllabus,Discussion,
-                    Question,Answer,Reply,Reviews
+                    Question,Answer,Reply,Reviews,Skills
                 )
 
 class CourseAdmin(admin.ModelAdmin):
@@ -18,4 +18,5 @@ admin.site.register(Discussion)
 admin.site.register(Answer)
 admin.site.register(Reply)
 admin.site.register(Syllabus)
+admin.site.register(Skills)
 admin.site.register(Reviews)

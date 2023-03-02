@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 
 from customshortuuidfield.fields import CustomShortUUIDField
+from quiz.models import Quiz
 
 User = get_user_model()
 
@@ -90,24 +91,24 @@ class Syllabus(models.Model):
     course_syllabus = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='course_syllabus')
     title = models.CharField(max_length=300, blank=False)
     topics = models.ManyToManyField('Topic', blank=True)
-    syllabus_quiz = models.ManyToManyField('Quiz',related_name='my_quiz', blank=True)
+    syllabus_quiz = models.ManyToManyField(Quiz,blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
 
-    def total_quiz_score(self):
-        if self.syllabus_quiz.none():
-            return f"{self.title} does not have any quiz to attempt"
-        else:
-            score = 0
-            quiz_attempt = QuizAttempt.objects.filter(user=self.request.user)
-            if quiz_attempt.exists():
-                for sc in quiz_attempt:
-                    score += sc.score
-                return score
-            return "Quiz is not attempted"
+    # def total_quiz_score(self):
+    #     if self.syllabus_quiz.none():
+    #         return f"{self.title} does not have any quiz to attempt"
+    #     else:
+    #         score = 0
+    #         quiz_attempt = QuizAttempt.objects.filter(user=self.request.user)
+    #         if quiz_attempt.exists():
+    #             for sc in quiz_attempt:
+    #                 score += sc.score
+    #             return score
+    #         return "Quiz is not attempted"
 
 
 class Topic(models.Model):
@@ -134,8 +135,11 @@ class Category(models.Model):
 class Discussion(models.Model):
     discussion_id = CustomShortUUIDField(prefix='discussion_',editable=False, unique=True, primary_key=True)
     course_discuss = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     questions = models.ManyToManyField('Question', blank=True)
 
+def __str__(self):
+    return f"{self.course_discuss.title} created by {self.user.email}"
 
 class Question(models.Model):
     question_id = CustomShortUUIDField(prefix='question_',editable=False, unique=True, primary_key=True)
@@ -204,25 +208,3 @@ class CourseEnroll(models.Model):
 
     def __str__(self):
         return self.user.email
-
-
-class Quiz(models.Model):
-    quiz_id = CustomShortUUIDField(prefix="quiz_",editable=False, unique=True,primary_key=True)
-    question = models.CharField(max_length=500)
-    answer = models.CharField(max_length=500)
-    option1 = models.CharField(max_length=500)
-    option2 = models.CharField(max_length=500)
-    option3 = models.CharField(max_length=500)
-    option4 = models.CharField(max_length=500)
-    created = models.DateTimeField(auto_now_add=True)
-
-
-    def __str__(self):
-        return self.question
-        
-
-class QuizAttempt(models.Model):
-    quizattempt_id = CustomShortUUIDField(prefix="quizattempt_",editable=False, unique=True,primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    quizes = models.ForeignKey(Quiz, on_delete=models.CASCADE)
-    score = models.PositiveIntegerField(default=0)

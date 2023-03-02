@@ -137,7 +137,7 @@ post_save.connect(create_profile, sender=UserAccount)
 }
 {
     "title": "Financial Distribution of Work",
-    "category": "category_aXSwuTkF2oRR37tnVVJnMv",
+    "category": "category_FQKZ25iMqGhz3dA62DaupF",
     "price": "30000"
 }
 {

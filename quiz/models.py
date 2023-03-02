@@ -2,31 +2,35 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from customshortuuidfield.fields import CustomShortUUIDField
 
-# Create your models here.
+# from course.models import Syllabus
+
 User = get_user_model()
 
+class Option(models.Model):
+    option_id = CustomShortUUIDField(prefix="option_",editable=False, max_length=10, primary_key=True,unique=True)
+    option = models.CharField(max_length=500)
+    correct = models.BooleanField(default=False)
+    quest = models.ForeignKey('Question', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.option
+
 class Question(models.Model):
-    question_id = CustomShortUUIDField(prefix="question_",editable=False, unique=True,primary_key=True)
+    question_id = CustomShortUUIDField(prefix="question_",editable=False, max_length=10, primary_key=True,unique=True)
+    quiz = models.ForeignKey('Quiz', on_delete=models.CASCADE)
     question = models.CharField(max_length=500)
+    opt = models.ManyToManyField(Option, blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.question
+    
 
-class QuestionOption(models.Model):
-    option = models.ForeignKey('Options', on_delete=models.DO_NOTHING)
-    questionz = models.OneToOneField(Question, on_delete=models.CASCADE)
+class Quiz(models.Model):
+    quiz_id = CustomShortUUIDField(prefix="quiz_", editable=False, max_length=10, primary_key=True,unique=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    title = models.CharField(max_length=100)
+    quizs = models.ManyToManyField(Question, blank=True, related_name="my_quiz")
 
-
-class QuizAttempt(models.Model):
-    quizattempt_id = CustomShortUUIDField(prefix="quizattempt_",editable=False, unique=True,primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='my_user')
-    quizes = models.ForeignKey(QuestionOption, on_delete=models.CASCADE)
-    score = models.PositiveIntegerField(default=0)
-
-class Options(models.Model):
-    option_id = CustomShortUUIDField(prefix="option_",editable=False, unique=True,primary_key=True)
-    quizz = models.ForeignKey(Question, on_delete=models.CASCADE)
-    option = models.CharField(max_length=500)
-    correct = models.BooleanField(default=False)
-
+    def __str__(self):
+        return self.title

@@ -1,8 +1,13 @@
 from rest_framework.views import APIView
-from rest_framework import permissions,authentication,generics,status
+from rest_framework import (
+                permissions,authentication,
+                generics,status,mixins
+                )
+from rest_framework.settings import api_settings
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from django.dispatch import Signal
+
 
 
 from .models import (
@@ -25,33 +30,23 @@ User = get_user_model()
 signal = Signal()
 
 
-class CourseUserCreateListAPIView(APIView):
+class CourseUserCreateListAPIView(
+                            mixins.ListModelMixin, 
+                            generics.GenericAPIView):
 
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
 
     def post(self, request, *args, **kwargs):
-        user = request.user
-        if user.is_authenticated:
-            course_serialize = CourseSerializer(data=request.data)
-            if course_serialize.is_valid():
-                if user.is_instructor:
-                    course_serialize.save(user=request.user)
-                    return Response(course_serialize.data, status=status.HTTP_201_CREATED)
-
-                return Response("User must be an instructor", status=status.HTTP_401_UNAUTHORIZED)
-            return Response(course_serialize.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response("User does not exist", status=status.HTTP_404_NOT_FOUND)
-
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request,*args,**kwargs):
-        if request.user.is_authenticated:
-            course = Course.objects.filter(user=request.user)
-            if course.exists():
-                course_serialize = CourseSerializer(instance=course, many=True)
-
-                return Response(course_serialize.data, status=status.HTTP_200_OK)
-            return Response("Course does not exist", status=status.HTTP_404_NOT_FOUND)
-        return Response("User does not exist", status=status.HTTP_404_NOT_FOUND)
+        return self.list(request, *args, **kwargs)    
 
 
 class CourseUserRetrieveUpdateDeleteAPIView(APIView):
@@ -114,23 +109,33 @@ class CategoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
     lookup_field = "pk"
 
 
-class SyllabusListCreateAPIView(APIView):
-    # permission_classes = [IsOwner]
+class SyllabusListCreateAPIView(
+                    mixins.ListModelMixin,
+                    generics.GenericAPIView):
+    
+    serializer_class = SyllabusSerializer
+    queryset = Syllabus.objects.all()
+    permission_classes = [IsOwner]
+
+    def get_success_headers(self, data):
+        try:
+            return {'Location': str(data[api_settings.URL_FIELD_NAME])}
+        except (TypeError, KeyError):
+            return {}
 
     def post(self, request, *args, **kwargs):
         course_id = kwargs["course_id"]
         
         course = Course.objects.filter(course_id=course_id)
+        course_single = course[0]
         if course.exists():
-            serialize = SyllabusSerializer(data=request.data)
-            if serialize.is_valid():
-                title = serialize.validated_data.get("title")
-                syllabus, create = Syllabus.objects.get_or_create(title=title,course_syllabus_id=course[0].course_id,user=request.user)
-                course.first().syllabus.add(create)
-                serialize.save(course_syllabus=course[0],user=request.user)
-                return Response(serialize.data, status=status.HTTP_201_CREATED)
-
-            return Response(serialize.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid():
+                cre = serializer.save(course_syllabus=course_single,user=request.user)
+                course.first().syllabus.add(cre)
+                headers = self.get_success_headers(serializer.data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response("Course does not exist", status=status.HTTP_404_NOT_FOUND)
 
@@ -139,8 +144,7 @@ class SyllabusListCreateAPIView(APIView):
         
         qs = Course.objects.filter(course_id=course_id)
         if qs.exists():
-            serialize = SyllabusSerializer(instance=qs[0].syllabus, many=True)
-            return Response(serialize.data, status=status.HTTP_200_OK)
+            return self.list(request, *args, **kwargs)    
         return Response('Course does not exist', status=status.HTTP_404_NOT_FOUND)
 
     
@@ -356,37 +360,40 @@ class InstructorDestroyAPIView(APIView):
         return Response('Course does not exist', status=status.HTTP_404_NOT_FOUND)
 
 
-class SkillListCreateAPIView(APIView):
-    permission_classes = []
+class SkillListCreateAPIView(
+                    mixins.ListModelMixin,
+                    generics.GenericAPIView):
+    serializer_class = SkillSerializer
+    queryset = Skills.objects.all()
+    # permission_classes = [IsOwner]
+
+    def get_success_headers(self, data):
+        try:
+            return {'Location': str(data[api_settings.URL_FIELD_NAME])}
+        except (TypeError, KeyError):
+            return {}
 
     def get(self, request, *args, **kwargs):
         course_id = kwargs["course_id"]
 
         qs = Course.objects.filter(course_id=course_id)
         if qs.exists():
-            qs = qs.first().skills.all()
-            serialize = SkillSerializer(instance=qs, many=True)
-            return Response(serialize.data, status=status.HTTP_200_OK)
-
+            return self.list(request, *args, **kwargs)    
         return Response('Course does not exist', status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, *args, **kwargs):
         course_id = kwargs["course_id"]
         qs = Course.objects.filter(course_id=course_id)
         if qs.exists():
-            serialize = SkillSerializer(data=request.data)
-            if serialize.is_valid():
-                content = serialize.validated_data.get("content")
-                serialize.save(skill_course=qs[0])
-                skill_create = Skills.objects.create(skill_course=qs[0],content=content)
-                qs = qs.first()
-                qs = qs.skills.add(skill_create)
-                return Response(serialize.data, status=status.HTTP_201_CREATED)
-            
-            return Response(serialize.errors, status=status.HTTP_400_BAD_REQUEST)
-                
-        else:
-            return Response("Course does not exist",status=status.HTTP_404_NOT_FOUND)
+        
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid():
+                cre = serializer.save(skill_course=qs[0])
+                qs.first().skills.add(cre)
+                headers = self.get_success_headers(serializer.data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response("Course does not exist",status=status.HTTP_404_NOT_FOUND)
 
 
 class SkillRetrieveDestroyAPIView(APIView):
@@ -499,26 +506,36 @@ class FAQRetrieveUpdateDestroyAPIView(APIView):
 
         return Response("Course does not exist", status=status.HTTP_404_NOT_FOUND)
 
-class ReviewListCreateAPIView(APIView):
+class ReviewListCreateAPIView(
+                    mixins.ListModelMixin,
+                    generics.GenericAPIView):
+
+    serializer_class = ReviewSerializer
+    queryset = Reviews.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_success_headers(self, data):
+        try:
+            return {'Location': str(data[api_settings.URL_FIELD_NAME])}
+        except (TypeError, KeyError):
+            return {}
 
     def post(self, request, *args, **kwargs):
         course_id = kwargs["course_id"]
         qs = Course.objects.filter(course_id=course_id)
         serialize = ReviewSerializer(data=request.data)
         if qs.exists():
-            if request.user.is_authenticated:
-                if qs[0].user == request.user:
-                    return Response('Course owner cannot give a review', status=status.HTTP_403_FORBIDDEN)
+            if qs[0].user != request.user:
+                serializer = self.get_serializer(data=request.data)
                 if serialize.is_valid():
-                    rate = serialize.validated_data.get('rate')
-                    comment = serialize.validated_data.get('comment')
-                    review = Reviews.objects.create(user=request.user,review_course=qs[0],rate=rate,comment=comment)
-                    qs.first().reviews.add(review)
-                    serialize.save(user=request.user, review_course=qs[0])
-                    return Response("Review succefully added", status=status.HTTP_201_CREATED)
-                return Response("You have to login to add review", status=status.HTTP_400_BAD_REQUEST)
-            return Response("Course does not exist", status=status.HTTP_404_NOT_FOUND)
-        return Response(serialize.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    if serializer.is_valid():
+                        cre = serializer.save(review_course=qs[0],user=request.user)
+                        qs.first().reviews.add(cre)
+                        headers = self.get_success_headers(serializer.data)
+                        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+                    return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response('Course owner cannot give a review', status=status.HTTP_403_FORBIDDEN)
+        return Response("Course does not exist", status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request, *args, **kwargs):
         course_id = kwargs["course_id"]
@@ -530,7 +547,19 @@ class ReviewListCreateAPIView(APIView):
         return Response("Course does not exist", status=status.HTTP_404_NOT_FOUND)
 
 
-class DiscussionCreateAPIView(APIView):
+class DiscussionCreateAPIView(
+                    mixins.ListModelMixin,
+                    generics.GenericAPIView):
+
+    serializer_class = DiscussionSerializer
+    queryset = Discussion.objects.all()
+    permission_classes = []
+
+    def get_success_headers(self, data):
+        try:
+            return {'Location': str(data[api_settings.URL_FIELD_NAME])}
+        except (TypeError, KeyError):
+            return {}
 
     def post(self, request, *args, **kwargs):
         course_id = kwargs["course_id"]
@@ -562,10 +591,11 @@ class QuestionCreateListAPIView(APIView):
             if request.user.is_authenticated:
                 serialize = QuestionSerializer(data=request.data)
                 if serialize.is_valid():
-                    quest = Question.objects.create(user=request.user, discuss=qs[0])
-                    serialize.save(discuss=qs[0],user=request.user)
+                    question = serialize.validated_data.get('question')
+                    quest = Question.objects.create(user=request.user, discuss=qs[0],question=question)
                     qs[0].questions.add(quest)
-
+                    # quest.delete()
+                    serialize.save(discuss=qs[0],user=request.user,commit=False)
                     return Response(serialize.data, status=status.HTTP_201_CREATED)
                 return Response(serialize.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             return Response("User must be authenticated", status=status.HTTP_401_UNAUTHORIZED)
@@ -785,6 +815,7 @@ class QuizUploadAPIView(APIView):
             serialize = QuizSerializer(data=request.data)
             if serialize.is_valid():
                 quiz = Quiz.objects.create(**serialize.validated_data)
+                
                 qs[0].syllabus_quiz.add(quiz)
                 serialize.save()
                 return Response(serialize.data, status=status.HTTP_201_CREATED)
