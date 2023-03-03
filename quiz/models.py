@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save
+
 from customshortuuidfield.fields import CustomShortUUIDField
 
 # from course.models import Syllabus
@@ -24,7 +26,15 @@ class Question(models.Model):
 
     def __str__(self):
         return self.question
-    
+
+class AttemtQuestion(models.Model):
+    question_id = CustomShortUUIDField(prefix="question_",editable=False, max_length=10, primary_key=True,unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    quest = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answered = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.fullname
 
 class Quiz(models.Model):
     quiz_id = CustomShortUUIDField(prefix="quiz_", editable=False, max_length=10, primary_key=True,unique=True)
@@ -34,3 +44,14 @@ class Quiz(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class QuizAttempter(models.Model):
+    attempter_id = CustomShortUUIDField(prefix="attempter_", editable=False, max_length=10, primary_key=True,unique=True)
+    user_attempt = models.ForeignKey(User, on_delete=models.CASCADE)
+    score = models.PositiveIntegerField(default=0)
+    quizz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user_attempt.fullname

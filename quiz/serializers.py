@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Option, Question, Quiz
+from .models import Option, Question, Quiz,QuizAttempter
 
 
 class OptionSerializer(serializers.ModelSerializer):
@@ -30,3 +30,28 @@ class QuizSerializer(serializers.ModelSerializer):
         if qs.exists():
             raise serializers.ValidationError(f"{attrs} has already exist.")
         return attrs
+    
+class QuizAttempterSerializer(serializers.ModelSerializer):
+
+    score = serializers.SerializerMethodField(read_only=True)
+    user_attempt = serializers.SerializerMethodField(read_only=True)
+    quizz = serializers.SerializerMethodField(read_only=True)
+    completed = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = QuizAttempter
+        fields = [
+            "score","user_attempt","quizz","completed"
+        ]
+
+    def get_score(self, obj):
+        return obj.score
+
+    def get_user_attempt(self, obj):
+        return obj.user_attempt.fullname
+
+    def get_quizz(self, obj):
+        return obj.quizz.title
+
+    def get_completed(self, obj):
+        return obj.completed
