@@ -1,0 +1,197 @@
+.auth__container{
+    height: 100vh;
+    margin-top: 0px;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(23,45,25,0.2)),url("../../assets/image1.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth__wrapper{
+    background-color: whitesmoke;
+    width: calc(100% * 0.4);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.auth__text h2{
+    margin: 2px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #102B3F;
+}
+
+.auth__text p{
+    font-size: 13px;
+    color: gray;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.auth__form{
+    margin: 10px 0px;
+}
+
+.auth__form__container{
+    display: flex;
+    flex-direction: column;
+}
+
+.auth__form__control{
+    margin-bottom: 7px;
+}
+
+input{
+    border: none;
+    border-bottom: 1px solid gainsboro;
+    background-color: transparent;
+    padding: 5px;
+}
+
+input::placeholder{
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0,0,0,0.5);
+}
+
+input:focus{
+    outline: none;
+    border-color: gainsboro;
+}
+
+.auth__submit{
+    margin-top: 10px;
+    text-decoration: none;
+}
+.auth__submit button{
+    background-color: #102B3F;
+    width: 100%;
+    border: none;
+    color: antiquewhite;
+    font-weight: 600;
+    padding: 10px;
+    font-size: 13px;
+    border-radius: 5px;
+    box-shadow: 0 -5px 3px -3px gainsboro, 0 5px 3px -3px gainsboro;
+}
+
+.auth__google button{
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    align-self: flex-end;
+    vertical-align: middle;
+    width: 100%;
+    border: none;
+    color: black;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 5px;
+    padding: 0px;
+    box-shadow: 0 -5px 3px -3px gainsboro, 0 5px 3px -3px gainsboro;
+}
+
+.auth__google button .auth__google__text{
+    height: 19px;
+    margin-left: 4px;
+    font-size: 12px;
+}
+
+.auth__google button .auth__google__text p{
+    font-size: 12px;
+}
+
+.auth__account{
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.auth__account .auth__account__text{
+    height: 18px;
+}
+
+.auth__account .auth__account__text p{
+    font-size: 11px;
+    color: gray;
+}
+
+.auth__link{
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #102B3F;
+    margin-left: 5px;
+}
+
+.forget__password{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.alert{
+    font-size: 12px;
+}
+
+@media screen and (max-width:527px) {
+    .auth__wrapper{
+        width: 100%;
+    }
+    .auth__text h2{
+        font-size: 14px;
+    }
+    .auth__google button p{
+        font-size: 11px;
+    }
+
+    .auth__account .auth__account__text p{
+        font-size: 10px;
+        color: gray;
+    }
+    .auth__account .auth__link{
+        font-size: 11px;
+    }
+    
+}
+
+/* Verify account */
+.verify__container{
+    background-color: whitesmoke;
+    padding: 20px;
+    border-radius: 6px;
+}
+
+.verify__wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.verify__wrapper .verify__button{
+    margin-top: 10px;
+}
+
+.verify__wrapper .verify__button button{
+    background-color: black;
+    color: white;
+    border-radius: 3px;
+    font-weight: 600;
+    padding: 6px;
+}
+
+.verify__container .verify__resend{
+    margin-top: 10px;
+}
+
+.link{
+    font-size: 12px;
+    text-decoration: none;
+    color: gray;
+    font-weight: 600;
+}
