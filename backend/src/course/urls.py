@@ -18,7 +18,9 @@ from .views import (
     LikeUnlikeReplyCreateAPIView,CourseEnrollAPIView,
     QuizUploadAPIView,FilterByCategoryAPIView,RequirementListCreateAPIView,
     RequirementRetrieveDestroyAPIView,InstructorDetail,ProfileDetail,
-    CourseSearchAPIView,FilterByCategoryWithFiterTypeAPIView,CourseFilterByUser
+    CourseSearchAPIView,FilterByCategoryWithFiterTypeAPIView,CourseFilterByUser,
+    SettingsAPIView
+
     )
 
 urlpatterns = [        
@@ -80,3 +82,4 @@ urlpatterns = [
         path('<slug:pk>/',CourseDetailAPIView.as_view(), name='course_detail'),
 
    ]        
+

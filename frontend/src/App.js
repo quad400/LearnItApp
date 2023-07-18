@@ -3,15 +3,8 @@ import { Route, Routes, BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 
 import {
-  Signup,
-  Login,
-  Home,
-  ForgetPassword,
-  Activate,
-  ResendActivation,
-  ResetPassword,
-  CategoryFilter,
-  CoursePage,
+  Signup,Login,Home,ForgetPassword,Activate,
+  ResendActivation,ResetPassword,CategoryFilter,CoursePage,
 } from "./components";
 
 import store from "./store";
@@ -34,6 +27,8 @@ import Profile from "./components/profile/Profile";
 import NotFound from "./components/NotFound";
 import AdminPage from "./components/admin/AdminPage";
 import AdminCategory from "./components/admin/AdminCategory";
+import Settings from "./components/admin/Settings";
+import UserListPage from "./components/admin/UserListPage";
 
 const App = () => (
   <Provider store={store}>
@@ -81,6 +76,8 @@ const App = () => (
 
           <Route path="admin" element={<AdminPage />}>
             <Route index element={<AdminCategory />} />
+            <Route path="users" element={<UserListPage />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
 
           <Route path="/cart" element={<Cart />} />

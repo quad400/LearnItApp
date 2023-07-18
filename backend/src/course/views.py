@@ -15,7 +15,8 @@ from django.dispatch import Signal
 from .models import (
                     Course,Category,FAQ,Reviews,
                     Syllabus,Topic,Instructor,Skills,
-                    Question,Answer,Reply,Discussion,Quiz,Requirement
+                    Question,Answer,Reply,Discussion,Quiz,Requirement,
+                    Settings
                     )
 from core.permissions import IsAdminAndStaffOrReadOnly,IsOwner
 from .serializer import (
@@ -23,7 +24,7 @@ from .serializer import (
                 InstructorRequestSerializer, InstructorRequestResponseSerializer,
                 FAQSerializer,SkillSerializer,ReviewSerializer,DiscussionSerializer,
                 QuestionSerializer, AnswerSerializer, ReplySerializer,QuizSerializer,
-                RequirementSerializer,CourseProfileSerializer, SearchSerializer
+                RequirementSerializer,CourseProfileSerializer, SearchSerializer,SettingsSerializer
                 )
 from core.utils import get_email
 from .email import InstructorRequestEmail
@@ -59,7 +60,7 @@ class CourseUserRetrieveUpdateDeleteAPIView(APIView):
 
     permission_classes = [IsOwner]
 
-    def put(self, request, *args, **kwargs):
+    def patch(self, request, *args, **kwargs):
         course_id = kwargs["course_id"]
         qs = Course.objects.filter(course_id=course_id)
         if qs.exists():
@@ -1075,7 +1076,6 @@ class CourseSearchAPIView(generics.ListAPIView):
         return queryset
 
 
-
 class SearchListView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', '')
@@ -1083,3 +1083,40 @@ class SearchListView(generics.GenericAPIView):
             return Response('Result not found', status=status.HTTP_400_BAD_REQUEST)
         results = perform_search(query)
         return Response(results)
+
+
+class SettingsAPIView(generics.ListCreateAPIView):
+    queryset = Settings.objects.all()
+    serializer_class = SettingsSerializer
+    pagination_class = None
+    # permission_classes = IsAdminAndStaffOrReadOnly
+
+class SettingsDetailDeleteAPIView(
+                                generics.RetrieveDestroyAPIView,
+                                generics.GenericAPIView):
+    queryset = Settings.objects.all()
+    serializer_class = SettingsSerializer
+    lookup_field = 'pk'
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+class SettingsUpdateAPIView(mixins.UpdateModelMixin,generics.GenericAPIView):
+    queryset = Settings.objects.all()
+    serializer_class = SettingsSerializer
+    lookup_field = 'pk'

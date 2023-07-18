@@ -19,14 +19,14 @@ const Signup = ({signup,isError}) => {
         setForm({...form, [e.target.name]: e.target.value});
     }
 
-    const handleGoogelSignUp = async () => {
-        try{
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/o/google-oauth2/?redirect_uri=http://localhost:3000`)
-            window.location.replace(res.data.authorization_url)
-        } catch (err){
+    // const handleGoogelSignUp = async () => {
+    //     try{
+    //         const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/o/google-oauth2/?redirect_uri=http://localhost:3000`)
+    //         window.location.replace(res.data.authorization_url)
+    //     } catch (err){
 
-        }
-    }
+    //     }
+    // }
 
     const handleSubmit = async(e)=>{
         e.preventDefault();

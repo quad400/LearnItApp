@@ -10,7 +10,7 @@ const ReviewSection = () => {
           <div className="review_card_top">
             <div className="card_image">
               <img
-                src={`https://learnit.s3.eu-west-2.amazonaws.com/build/static/media/James_Hemgen.72b71a170bd9ffacd362.jpeg`}
+                src={require('../../assets/James_Hemgen.jpeg')}
                 alt="James_Hemgen"
               />
             </div>
@@ -33,7 +33,7 @@ const ReviewSection = () => {
             <div className="card_image">
               <img
 
-                src={`https://learnit.s3.eu-west-2.amazonaws.com/build/static/media/Ian_Stevens.bddf66d64cef5bda985b.png`}
+                src={require("../../assets/Ian_Stevens.png")}
                 alt="Ian_Stevens"
               />
             </div>
@@ -53,7 +53,7 @@ const ReviewSection = () => {
           <div className="review_card_top">
             <div className="card_image">
               <img
-                src={`https://learnit.s3.eu-west-2.amazonaws.com/build/static/media/Karen_hunter.9794b408a885c18c3ef5.png`}
+                src={require("../../assets/Karen_hunter.png")}
                 alt="Karen_hunter"
               />
             </div>

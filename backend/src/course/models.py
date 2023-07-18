@@ -269,3 +269,12 @@ class CourseEnroll(models.Model):
     def __str__(self):
         return self.user.email
 
+
+class Settings(models.Model):
+    logoIcon = models.ImageField(upload_to='settings/',null=True)
+    homeBackgroundImg = models.ImageField(upload_to='settings/',null=True)
+    bannerImg = models.ImageField(upload_to='settings/',null=True)
+    rev1 = models.ImageField(upload_to='settings/',null=True)
+    rev2 = models.ImageField(upload_to='settings/',null=True)
+    rev3 = models.ImageField(upload_to='settings/',null=True)
+    errorImg = models.ImageField(upload_to='settings/',null=True)

@@ -11,8 +11,8 @@ const Home = () => {
     <div className="home">
       <div className="home__container">
         <div className="home__top__text">
-          <h2>
-            Getting <span>Quality Education</span> Is Now More Easy
+          <h2>Getting
+             <span>Quality Education</span> Is Now More Easy
           </h2>
           <p>
             We will provide you with latest online learning system and material
@@ -22,7 +22,7 @@ const Home = () => {
         <div className="home__top__image">
           <img
             className="home__image"
-            src={`${process.env.STATIC_MEDIA}img2.e2f13191aeb1272746ca.png`}
+            src={require("../../assets/img2.png")}
             alt="my_image"
           />
         </div>

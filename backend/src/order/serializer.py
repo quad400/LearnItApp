@@ -40,3 +40,5 @@ class OrderSerializer(serializers.ModelSerializer):
             "is_completed",
             "cart",
         )
+
+

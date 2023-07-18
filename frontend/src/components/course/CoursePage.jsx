@@ -104,21 +104,21 @@ const CoursePage = () => {
           <Loader />
         ) : (
           <div className="top__body">
-            <h5>{course.title}</h5>
-            <p>{course.detail}</p>
+            <h5>{course?.title}</h5>
+            <p>{course?.detail}</p>
             <div className="card__rate">
-              <p className="rate">{course.average_rate}</p>
+              <p className="rate">{course?.average_rate}</p>
               <ReactStars
                 edit={false}
                 isHalf={true}
-                value={course.average_rate}
+                value={course?.average_rate}
               />
-              <Link className="link_style">({course.count_rate}) ratings</Link>
-              <p className="icon_paragraph">{course.enrolled_count} students</p>
+              <Link className="link_style">({course?.count_rate}) ratings</Link>
+              <p className="icon_paragraph">{course?.enrolled_count} students</p>
             </div>
             <div className="info">
               <p className="icon_paragraph">Created by</p>
-              <Link className="link_style"> {course.user}</Link>
+              <Link className="link_style"> {course?.user}</Link>
             </div>
             <div className="info">
               <svg
@@ -133,7 +133,7 @@ const CoursePage = () => {
                 <path d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1 1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z" />
                 <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
               </svg>
-              <p className="icon_paragraph">Last updated {course.updated}</p>
+              <p className="icon_paragraph">Last updated {course?.updated}</p>
             </div>
             <div className="info">
               <svg
@@ -161,23 +161,23 @@ const CoursePage = () => {
               >
                 <path d="M4 11H2v3h2v-3zm5-4H7v7h2V7zm5-5v12h-2V2h2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-2zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3z" />
               </svg>
-              <p className="icon_paragraph">{course.level}</p>
+              <p className="icon_paragraph">{course?.level}</p>
             </div>
             <div className="price">
               <div className="dollar">
                 <strong>$</strong>
-                <strong>{course.price}</strong>
+                <strong>{course?.price}</strong>
               </div>
               <div className="dollar">
                 <del>$</del>
-                <del>{course.previous_price}</del>
+                <del>{course?.previous_price}</del>
               </div>
               <p className="icon_paragraph">84% off</p>
             </div>
             <div className="buy_me">
               <div className="buy_text">
                 <div className="to_cart">
-                  <button onClick={() => handleAddToCart(course.course_id)}>
+                  <button onClick={() => handleAddToCart(course?.course_id)}>
                     Add to cart
                   </button>
                 </div>
@@ -195,13 +195,13 @@ const CoursePage = () => {
           <Loader />
         ) : (
           <>
-            {course.skills.length === 0 ? (
+            {course?.skills.length === 0 ? (
               <></>
             ) : (
               <div className="to_learn">
                 <h4>What you'll learn</h4>
                 <Row>
-                  {course.skills.map((skill) => (
+                  {course?.skills.map((skill) => (
                     <Col key={skill.skill_id} className="column" md={6} xs={12}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -225,8 +225,8 @@ const CoursePage = () => {
         <div className="course_content">
           <h4>Course content</h4>
           <div className="container">
-            <p className="syl_count">{course.syllabus_count} sections</p>
-            <p className="syl_count">{course.total_topic_count} lectures</p>
+            <p className="syl_count">{course?.syllabus_count} sections</p>
+            <p className="syl_count">{course?.total_topic_count} lectures</p>
           </div>
           <div className="details">
             {loading ? (
@@ -234,7 +234,7 @@ const CoursePage = () => {
             ) : (
               <>
                 <Collapse defaultActiveKey={["1"]}>
-                  {course.syllabus.map((syllabus) => (
+                  {course?.syllabus.map((syllabus) => (
                     <Collapse.Panel
                       defaultActiveKey={syllabus.syllabus_id[0]}
                       header=<strong>{syllabus.title}</strong>
@@ -323,7 +323,7 @@ const CoursePage = () => {
         <div className="course_content">
           <h4>Requirements</h4>
           <ul>
-            {course.requirement.map((requires) => (
+            {course?.requirement.map((requires) => (
               <li>
                 <p>{requires.content}</p>
               </li>
@@ -333,32 +333,32 @@ const CoursePage = () => {
         <div className="course_content">
           <h4>Description</h4>
           <div className="content">
-            <p>{course.description}</p>
+            <p>{course?.description}</p>
           </div>
         </div>
         <div className="course_content">
           <h4>Instructor</h4>
-          <Link className="instruct">{course.profile.fullname}</Link>
-          <p>{course.profile.work_role}</p>
+          <Link className="instruct">{course?.profile.fullname}</Link>
+          <p>{course?.profile.work_role}</p>
           <div className="instruct_data">
             <div className="avatar">
               <Avatar
                 size={128}
-                src={`http://127.0.0.1:8000${course.profile.picture}`}
+                src={course?.profile.picture}
               />
             </div>
           </div>
 
           <div className="content">
-            <p>{course.profile.bio}</p>
+            <p>{course?.profile.bio}</p>
           </div>
         </div>
-        {course.count_rate !== 0 && (
+        {course?.count_rate !== 0 && (
           <div className="course_content">
-            <h4>{course.average_rate} course rating</h4>
-            <h4>{course.count_rate} ratings</h4>
+            <h4>{course?.average_rate} course? rating</h4>
+            <h4>{course?.count_rate} ratings</h4>
             <Row className="row">
-              {course.reviews.map((review) => (
+              {course?.reviews.map((review) => (
                 <Col md={5} sm={6} xs={12}>
                   <div className="divide"></div>
                   <div className="review">
@@ -387,7 +387,7 @@ const CoursePage = () => {
       <div className="home">
         <h4>
           More Courses by{" "}
-          <Link className="instruct_name">{course.profile.fullname}</Link>
+          <Link className="instruct_name">{course?.profile.fullname}</Link>
         </h4>
         <div className="more_course">
         {

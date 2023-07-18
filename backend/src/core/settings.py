@@ -87,7 +87,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-DJANGO_SUPERUSER_USERNAME=os.environ.get("DJANGO_SUPERUSER_USERNAME")
 DJANGO_SUPERUSER_PASSWORD=os.environ.get("DJANGO_SUPERUSER_PASSWORD")
 DJANGO_SUPERUSER_EMAIL=os.environ.get("DJANGO_SUPERUSER_EMAIL")
 
@@ -111,24 +110,24 @@ DB_IS_AVAIL = all([
 POSTGRES_READY=bool(int(os.environ.get('POSTGRES_READY')))
 
 
-if DB_IS_AVAIL and POSTGRES_READY:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME' : DB_DATABASE,
-            'USER' : DB_USER,
-            'PASSWORD' : DB_PASSWORD,
-            'HOST' : DB_HOST,
-            'PORT' : DB_PORT,
-        }
-    }
-# else:
+# if bool(int(os.environ.get("DEBUG")))==False:
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME' : DB_DATABASE,
+#         'USER' : DB_USER,
+#         'PASSWORD' : DB_PASSWORD,
+#         'HOST' : DB_HOST,
+#         'PORT' : DB_PORT,
 #     }
 # }
+# else:
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 
@@ -187,36 +186,28 @@ AUTHENTICATION_BACKENDS = (
 
 
 # AWS BUCKET CONFIG
-if bool(int(os.environ.get("DEBUG")))==False:
-    AWS_DEFAULT_ACL=None
-    AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
-    AWS_S3_USE_SSL=True
-    AWS_S3_VERITY=True
-    AWS_S3_REGION_NAME="eu-west-2"
-    AWS_ACCESS_KEY_ID=os.environ.get("AWS_ACCESS_KEY_ID")
-    AWS_S3_SECRET_ACCESS_KEY=os.environ.get("AWS_S3_SECRET_ACCESS_KEY")
-    AWS_S3_CUSTOM_DOMAIN = "learnit.s3.eu-west-2.amazonaws.com"
-    # file upload storage
-    DEFAULT_FILE_STORAGE = 'core.storages.MediaStorage'
-    # staticfiles
-    STATICFILES_STORAGE = 'core.storages.StaticFileStorage'
 
-    STATIC_URL = 'https://learnit.s3.eu-west-2.amazonaws.com/'
-    MEDIA_URL = 'https://learnit.s3.eu-west-2.amazonaws.com/'
-    STATICFILES_DIRS = [
-        BASE_DIR / "build/static"
-    ]
-    STATIC_ROOT = "static/"
-    MEDIA_ROOT = "media/"
+AWS_DEFAULT_ACL=None
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_USE_SSL=True
+AWS_S3_VERITY=True
+AWS_S3_REGION_NAME="eu-west-2"
+AWS_ACCESS_KEY_ID=os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_S3_SECRET_ACCESS_KEY=os.environ.get("AWS_S3_SECRET_ACCESS_KEY")
+AWS_S3_CUSTOM_DOMAIN = "learnit.s3.eu-west-2.amazonaws.com"
+# file upload storage
+DEFAULT_FILE_STORAGE = 'core.storages.MediaStorage'
+# staticfiles
+STATICFILES_STORAGE = 'core.storages.StaticFileStorage'
 
-else: 
-    STATIC_URL = 'static/'
-    MEDIA_URL = "media/"
-    STATICFILES_DIRS = [
-        BASE_DIR / "build" / "static"
-    ]
-    STATIC_ROOT = BASE_DIR.parent / "local-cdn" / "static"
-    MEDIA_ROOT = BASE_DIR.parent / "local-cdn" / "media"
+STATIC_URL = 'https://learnit.s3.eu-west-2.amazonaws.com/static/'
+MEDIA_URL = 'https://learnit.s3.eu-west-2.amazonaws.com/media/'
+STATICFILES_DIRS = [
+    BASE_DIR / "build/static"
+]
+STATIC_ROOT = "static/"
+MEDIA_ROOT = "media/"
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -252,8 +243,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
-
-CORS_ALLOW_ALL_ORIGINS=True
+CORS_ORIGIN_ALLOW_ALL = True
 
 '''
     Algolia configuration

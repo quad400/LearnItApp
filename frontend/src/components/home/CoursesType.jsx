@@ -22,7 +22,7 @@ const CoursesType = () => {
       <>
         <h3>Popular Course</h3>
         <div className="courses">
-        {loading ? <Loader /> : 
+        {!loading ? <Loader /> : 
            <CarouselSlickCourse courses={courses} />
         }
         </div>

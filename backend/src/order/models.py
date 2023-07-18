@@ -39,6 +39,3 @@ class Order(models.Model):
         return total
 
 
-class Settings(models.Model):
-    logoIcon = mo
-

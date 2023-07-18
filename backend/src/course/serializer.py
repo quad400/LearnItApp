@@ -2,7 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import (
     Course,Instructor, Syllabus, Category, Topic,Quiz,
-    Skills,FAQ,Reviews,Discussion,Answer,Reply,Question,Requirement
+    Skills,FAQ,Reviews,Discussion,Answer,Reply,
+    Question,Requirement,Settings,
     )
 
 from account.models import Profile
@@ -372,6 +373,14 @@ class InstructorRequestResponseSerializer(serializers.Serializer):
 class InstructorDetailSerializer(serializers.Serializer):
 
     rate_count = serializers.IntegerField(read_only=True)
+
+
+
+class SettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Settings
+        fields = '__all__'
+
 
 {
 "question" : "",

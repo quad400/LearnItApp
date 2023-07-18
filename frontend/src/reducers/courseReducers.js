@@ -301,7 +301,7 @@ export const topicDetailReducer = (
 };
 
 export const courseFilterReducer = (
-  state = { loading: true, success: false, error: null, data: { count: 1 } },
+  state = { loading: true, success: false, error: null, data: {} },
   action
 ) => {
   switch (action.type) {

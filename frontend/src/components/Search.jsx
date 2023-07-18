@@ -3,6 +3,7 @@ import algoliasearch from "algoliasearch";
 import { Link,useNavigate } from "react-router-dom";
 import { courseDetail } from "../actions/course";
 import {useDispatch} from "react-redux";
+import { numberToPrice } from "../constants";
 
 
 const client = algoliasearch("YE198UKSU6", "f4d7908ef1e138c2e40453fc3a9125ae");
@@ -70,7 +71,7 @@ const SearchComponent = () => {
             <p>{result.title}</p>
             <div className="search_content_bottom">
               <small>by {result.user}</small>
-              <small>#{result.price}</small>
+              <small>{numberToPrice(result.price)}</small>
             </div>
             {/* Display other fields as needed */}
           </Link>

@@ -19,7 +19,7 @@ const Banner = () => {
                   </div>
               </div>
               <div className="banner__image">
-                  <img src={`${process.env.STATIC_MEDIAL}img5.7573fdfccdce115b27fc.jpg`} alt="banner" className='banner__img'/>
+                  <img src={require('../assets/img5.png')} alt="banner" className='banner__img'/>
               </div>
           </div>
       </div>

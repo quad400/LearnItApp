@@ -57,7 +57,7 @@ const CarouselSlickCourse = ({courses}) => {
 
   return (
     <Slider {...settings}>
-      {courses.map((cou, index) => (
+      {courses?.map((cou, index) => (
         <Card2 props={cou} key={index} />
       ))}
     </Slider>
